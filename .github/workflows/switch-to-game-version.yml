@@ -1,0 +1,35 @@
+name: Passa alla versione con gioco
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  switch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repository
+        uses: actions/checkout@v4
+
+      - name: Controlla la data e fai lo scambio se necessario
+        run: |
+          TARGET_DATE="2027-06-18"
+          TODAY=$(date -u +%Y-%m-%d)
+
+          if [[ "$TODAY" < "$TARGET_DATE" ]]; then
+            echo "Non è ancora il momento. Non faccio nulla."
+            exit 0
+          fi
+
+          if cmp -s index.html index-con-gioco.html; then
+            echo "Lo scambio è già stato fatto. Non faccio nulla."
+            exit 0
+          fi
+
+          cp index-con-gioco.html index.html
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Passaggio automatico alla versione con gioco e foto (18/06/2027)"
+          git push
