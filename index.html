@@ -705,9 +705,10 @@
   (function(){
     var root = document.getElementById('rsvp');
     if(!root) return;
-    var ALLERGIE = ['Glutine','Crostacei','Uova','Pesce','Arachidi','Soia','Latte','Frutta a guscio','Sedano','Senape','Sesamo','Solfiti','Lupini','Molluschi'];
-    var INTOLLERANZE = ['Celiachia','Lattosio','Nichel','Istamina','Fruttosio','Favismo'];
-    var ALTRO = ['Incinta','Vegetariano','Vegano'];
+    var SHEET_URL = ''; // URL della web app Google Apps Script (vedi apps-script/Code.gs)
+    var ALLERGIE = ['Glutine (cereali)','Crostacei','Uova','Pesce','Arachidi','Soia','Latte e derivati','Frutta a guscio','Sedano','Senape','Sesamo','Solfiti','Lupini','Molluschi'];
+    var INTOLLERANZE = ['Celiachia','Lattosio','Nichel','Istamina','Fruttosio','Favismo','Gravidanza','Funghi'];
+    var DIETE = ['Vegetariano','Vegano','Fruttariano','Pescetariano','Crudista','Halal','Kosher'];
     var state = { step:1, adults:1, kids:0, people:[] };
     var steps = root.querySelectorAll('.rsvp-step');
     var dots = root.querySelectorAll('.rsvp-dot');
@@ -732,7 +733,7 @@
       state.people = list.map(function(p, n){
         var o = old[n];
         if(o && o.kid === p.kid) return o;
-        return { kid:p.kid, nome:'', cognome:'', allergie:[], intolleranze:[], altro:[], note:'' };
+        return { kid:p.kid, nome:'', cognome:'', dieta:'', seggiolone:false, allergie:[], intolleranze:[], note:'' };
       });
     }
 
@@ -751,18 +752,38 @@
         return '<div class="rsvp-person"><div class="rsvp-person-title">'+esc(p.nome+' '+p.cognome)+(p.kid?'<span>bambino</span>':'')+'</div>'
           + '<div class="rsvp-group"><div class="rsvp-group-title">Allergie</div><div class="rsvp-chips">'+chips(ALLERGIE,'allergie',i,p.allergie)+'</div></div>'
           + '<div class="rsvp-group"><div class="rsvp-group-title">Intolleranze</div><div class="rsvp-chips">'+chips(INTOLLERANZE,'intolleranze',i,p.intolleranze)+'</div>'
-          + '<p class="rsvp-note">Allergia al latte: esclude anche i formaggi. Lattosio: spesso i formaggi stagionati vanno bene. Celiachia: la cucina userà preparazioni senza contaminazione.</p></div>'
-          + '<div class="rsvp-group"><div class="rsvp-group-title">Altre esigenze</div><div class="rsvp-chips">'+chips(ALTRO,'altro',i,p.altro)+'</div>'
-          + '<input class="rsvp-input" type="text" placeholder="Altro (facoltativo)" data-idx="'+i+'" data-field="note" value="'+esc(p.note)+'" style="margin:10px 0 0;"></div></div>';
+          + '<p class="rsvp-note">Allergia al latte: esclude anche i formaggi. Lattosio: spesso i formaggi stagionati vanno bene. Celiachia: la cucina userà preparazioni senza contaminazione. Gravidanza: la cucina eviterà crudi e formaggi non pastorizzati.</p></div>'
+          + '<div class="rsvp-group"><div class="rsvp-group-title">Dieta e altro</div>'
+          + '<select class="rsvp-input" data-idx="'+i+'" data-field="dieta"><option value="">Nessuna dieta particolare</option>'+DIETE.map(function(v){ return '<option'+(p.dieta===v?' selected':'')+'>'+v+'</option>'; }).join('')+'</select>'
+          + (p.kid ? '<div class="rsvp-chips" style="margin-bottom:10px;"><label class="rsvp-chip"><input type="checkbox" data-idx="'+i+'" data-field="seggiolone"'+(p.seggiolone?' checked':'')+'><span>Serve il seggiolone</span></label></div>' : '')
+          + '<input class="rsvp-input" type="text" placeholder="Altre allergie / intolleranze (facoltativo)" data-idx="'+i+'" data-field="note" value="'+esc(p.note)+'" style="margin:0;"></div></div>';
       }).join('');
     }
 
     function personLine(p){
       var tags = p.allergie.map(function(v){ return 'allergia: ' + v; })
-        .concat(p.intolleranze.map(function(v){ return 'intolleranza: ' + v; }))
-        .concat(p.altro, p.note ? [p.note] : []);
+        .concat(p.intolleranze.map(function(v){ return 'intolleranza: ' + v; }));
+      if(p.dieta) tags.push(p.dieta);
+      if(p.seggiolone) tags.push('seggiolone');
+      if(p.note) tags.push(p.note);
       return p.nome + ' ' + p.cognome + (p.kid ? ' (bambino)' : '') + ' – ' + (tags.length ? tags.join(', ') : 'nessuna esigenza');
     }
+
+    // Salva le conferme nel foglio Google (se configurato), una sola volta per compilazione
+    var lastSent = '';
+    function sendToSheet(){
+      if(!SHEET_URL) return;
+      var body = JSON.stringify({ persone: state.people.map(function(p){
+        return { nome:p.nome, cognome:p.cognome, fascia:p.kid ? 'Bambino' : 'Adulto', dieta:p.dieta, seggiolone:p.seggiolone,
+                 allergie:p.allergie, intolleranze:p.intolleranze, altre:p.note };
+      }) });
+      if(body === lastSent) return;
+      lastSent = body;
+      try { fetch(SHEET_URL, { method:'POST', mode:'no-cors', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body:body, keepalive:true }); } catch(e){}
+    }
+    ['rsvp-send-roberto','rsvp-send-francesca'].forEach(function(id){
+      document.getElementById(id).addEventListener('click', sendToSheet);
+    });
 
     function renderSummary(){
       document.getElementById('rsvp-summary').innerHTML = '<strong>'+plur(state.adults,'adulto','adulti')+', '+plur(state.kids,'bambino','bambini')+'</strong><ul>'
@@ -798,7 +819,9 @@
     root.addEventListener('input', function(e){
       var t = e.target, i = t.getAttribute('data-idx');
       if(i === null) return;
-      if(t.type === 'checkbox'){
+      if(t.type === 'checkbox' && t.getAttribute('data-field')){
+        state.people[i][t.getAttribute('data-field')] = t.checked;
+      } else if(t.type === 'checkbox'){
         var arr = state.people[i][t.getAttribute('data-group')], at = arr.indexOf(t.value);
         if(t.checked && at < 0) arr.push(t.value);
         if(!t.checked && at > -1) arr.splice(at, 1);
