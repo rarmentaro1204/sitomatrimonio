@@ -2,8 +2,21 @@ name: Passa alla versione con gioco
 
 on:
   schedule:
-    - cron: '0 6 * * *'
+    # 19/06/2027 ore 16:00 italiane (CEST = UTC+2) -> 14:00 UTC.
+    # Gli altri orari sono di riserva: se il primo giro parte in ritardo o fallisce,
+    # il successivo ripete lo scambio (se è già stato fatto non succede nulla).
+    - cron: '0 14 19 6 *'
+    - cron: '30 14 19 6 *'
+    - cron: '0 18 19 6 *'
+    - cron: '0 6 20 6 *'
+    # Una volta al mese: tiene attivo il workflow (GitHub disattiva quelli programmati
+    # dopo 60 giorni senza attività nelle repo pubbliche).
+    - cron: '0 5 1 * *'
   workflow_dispatch: {}
+
+permissions:
+  contents: write
+  actions: write
 
 jobs:
   switch:
@@ -12,13 +25,19 @@ jobs:
       - name: Checkout del repository
         uses: actions/checkout@v4
 
+      - name: Tieni attivo il workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/switch-to-game-version.yml/enable" || true
+
       - name: Controlla la data e fai lo scambio se necessario
         run: |
-          TARGET_DATE="2027-06-18"
-          TODAY=$(date -u +%Y-%m-%d)
+          TARGET="2027-06-19 14:00:00"   # UTC = 16:00 ora italiana
+          NOW_TS=$(date -u +%s)
+          TARGET_TS=$(date -u -d "$TARGET" +%s)
 
-          if [[ "$TODAY" < "$TARGET_DATE" ]]; then
-            echo "Non è ancora il momento. Non faccio nulla."
+          if [ "$NOW_TS" -lt "$TARGET_TS" ]; then
+            echo "Non è ancora il momento ($TARGET UTC). Non faccio nulla."
             exit 0
           fi
 
@@ -31,5 +50,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Passaggio automatico alla versione con gioco e foto (18/06/2027)"
+          git commit -m "Passaggio automatico alla versione con gioco e foto (19/06/2027 ore 16:00)"
           git push
