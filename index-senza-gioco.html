@@ -359,6 +359,44 @@
     .countdown{ gap:14px; }
     .countdown .cd-num{ font-size:24px; }
   }
+
+  /* ===== Adattivo: tablet e desktop (il mobile resta invariato) ===== */
+  @media(min-width:768px){
+    body{ padding:40px 24px; }
+    .card{ max-width:780px; border-radius:10px; }
+    .frame{ inset:20px; }
+    .content{ padding:76px 72px 56px; }
+    .garland{ width:260px; height:260px; }
+    .hero h1{ font-size:84px; }
+    h2{ font-size:54px; margin-bottom:28px; }
+    p{ font-size:17px; }
+    .section-label{ font-size:12px; }
+    .venue-illus{ max-width:480px; }
+    .venue-name{ font-size:28px; }
+    .venue-addr{ font-size:16px; }
+    .faq{ max-width:620px; }
+    .countdown{ gap:28px; }
+    .countdown .cd-num{ font-size:34px; }
+  }
+  @media(min-width:768px){
+    .game-card-grid, section:has(> .game-card){ }
+    section:has(> .game-card){
+      display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:stretch;
+    }
+    section:has(> .game-card) > .section-label,
+    section:has(> .game-card) > h2{ grid-column:1 / -1; }
+    section:has(> .game-card) .game-card{ margin-bottom:0; }
+  }
+  @media(min-width:1100px){
+    body{ padding:56px 32px; }
+    .card{ max-width:960px; }
+    .content{ padding:90px 110px 64px; }
+    .garland{ width:300px; height:300px; }
+    .hero h1{ font-size:96px; }
+    p{ font-size:18px; }
+    .venue-illus{ max-width:560px; }
+    .faq{ max-width:700px; }
+  }
 </style>
 </head>
 <body class="locked">
