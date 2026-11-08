@@ -1,0 +1,68 @@
+name: Prova mensile nuovo sito (15 -> nuovo, 16 -> vecchio)
+
+on:
+  schedule:
+    # Dal 15 novembre 2026 al 16 maggio 2027 (mesi: nov, dic, gen, feb, mar, apr, mag).
+    # Il 15 pubblica la versione NUOVA (con gioco), il 16 torna alla VECCHIA (senza gioco).
+    # Alle 06:00 UTC (07:00/08:00 italiane); alle 12:00 UTC c'è un giro di riserva:
+    # se il primo è già andato a buon fine non succede nulla.
+    - cron: '0 6 15 11,12,1,2,3,4,5 *'
+    - cron: '0 12 15 11,12,1,2,3,4,5 *'
+    - cron: '0 6 16 11,12,1,2,3,4,5 *'
+    - cron: '0 12 16 11,12,1,2,3,4,5 *'
+  workflow_dispatch:
+    inputs:
+      versione:
+        description: 'Forza una versione (per fare una prova a mano)'
+        type: choice
+        default: auto
+        options:
+          - auto
+          - nuova
+          - vecchia
+
+permissions:
+  contents: write
+
+jobs:
+  prova:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repository
+        uses: actions/checkout@v4
+
+      - name: Applica la versione giusta
+        env:
+          FORZA: ${{ github.event.inputs.versione }}
+        run: |
+          # Dopo il passaggio definitivo del 19/06/2027 questo workflow non tocca più nulla.
+          if [ "$(date -u +%s)" -ge "$(date -u -d '2027-06-19 14:00:00' +%s)" ]; then
+            echo "Passaggio definitivo già avvenuto o imminente. Non faccio nulla."
+            exit 0
+          fi
+
+          GIORNO=$(date -u +%d)
+          VERSIONE="${FORZA:-auto}"
+          if [ "$VERSIONE" = "auto" ]; then
+            if [ "$GIORNO" = "15" ]; then VERSIONE=nuova; else VERSIONE=vecchia; fi
+          fi
+
+          if [ "$VERSIONE" = "nuova" ]; then
+            SORGENTE=index-con-gioco.html
+            MSG="Prova mensile: pubblico il NUOVO sito (con gioco e foto)"
+          else
+            SORGENTE=index-senza-gioco.html
+            MSG="Prova mensile: torno al sito VECCHIO (senza gioco)"
+          fi
+
+          if cmp -s "$SORGENTE" index.html; then
+            echo "index.html è già la versione $VERSIONE. Non faccio nulla."
+            exit 0
+          fi
+
+          cp "$SORGENTE" index.html
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "$MSG"
+          git push
