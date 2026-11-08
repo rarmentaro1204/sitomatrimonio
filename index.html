@@ -334,7 +334,7 @@
   .rsvp-summary ul{ padding-left:18px; margin:10px 0; }
 
   footer{
-    text-align:center; padding:10px 0 6px; color:var(--plum-soft); font-size:13px;
+    text-align:center; padding:10px 0 6px; color:var(--plum-soft); font-size:22px; line-height:1.4; padding-top:18px;
     font-style:italic; font-family:'Cormorant Garamond',serif;
   }
   .footer-heart{ margin-top:10px; color:var(--lavender); font-size:16px; }
@@ -397,6 +397,8 @@
     .venue-illus{ max-width:560px; }
     .faq{ max-width:700px; }
   }
+
+  @media(min-width:768px){ footer{ font-size:26px; } }
 </style>
 </head>
 <body class="locked">
@@ -492,22 +494,6 @@
         </div>
       </div>
     </section>
-
-    <div class="divider">
-      <svg viewBox="0 0 64 14" xmlns="http://www.w3.org/2000/svg">
-        <line x1="0" y1="7" x2="24" y2="7" stroke="#BFA05C" stroke-width="1"/>
-        <line x1="40" y1="7" x2="64" y2="7" stroke="#BFA05C" stroke-width="1"/>
-        <path d="M32,4.5 C30.5,2 27,2.7 27,5.2 C27,7.7 32,10 32,10 C32,10 37,7.7 37,5.2 C37,2.7 33.5,2 32,4.5 Z" fill="#B9A9CC" opacity="0.8"/>
-      </svg>
-    </div>
-
-    <div class="divider">
-      <svg viewBox="0 0 64 14" xmlns="http://www.w3.org/2000/svg">
-        <line x1="0" y1="7" x2="24" y2="7" stroke="#BFA05C" stroke-width="1"/>
-        <line x1="40" y1="7" x2="64" y2="7" stroke="#BFA05C" stroke-width="1"/>
-        <path d="M32,4.5 C30.5,2 27,2.7 27,5.2 C27,7.7 32,10 32,10 C32,10 37,7.7 37,5.2 C37,2.7 33.5,2 32,4.5 Z" fill="#B9A9CC" opacity="0.8"/>
-      </svg>
-    </div>
 
     <section class="reveal-on-scroll" id="rsvp">
       <div class="section-label">Conferma</div>
