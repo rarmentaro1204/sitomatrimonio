@@ -74,24 +74,33 @@ body { font-weight: 400; }
 .hero--split .hero__text { display: grid; gap: var(--s-5); align-content: start; }
 .hero--split h1 { font: 400 clamp(64px, 4.4vw + 40px, 116px)/1 var(--font-script); letter-spacing: 0; color: var(--ink); }
 .hero--split h1 .amp { color: var(--gold-ink); }
-.hero--split .hero__lead { font: 500 clamp(20px, .6vw + 17px, 25px)/1.45 var(--font-display); max-width: 26ch; }
+.hero--split .hero__lead { font: 500 clamp(20px, .6vw + 17px, 25px)/1.45 var(--font-display); max-width: 26ch; margin: 0; }
 .seal { background: var(--p-surface); display: grid; place-items: center; }
 .seal::before, .seal::after { content: ""; position: absolute; border: 1px solid var(--line-gold); border-radius: calc(var(--r-lg) - 6px); pointer-events: none; z-index: 1; }
 .seal::before { inset: 14px; }
 .seal::after { inset: 21px; }
 .hero__media.seal > img { position: absolute; inset: 0; margin: auto; height: min(76%, 520px); width: auto; max-width: calc(100% - 64px); aspect-ratio: 1; object-fit: contain; border-radius: 50%; box-shadow: 0 24px 50px -26px rgba(74, 59, 99, .55); }
-.countdown { display: flex; gap: clamp(24px, 3vw, 40px); }
-.countdown div { display: grid; gap: 4px; }
-.countdown b { font: 600 clamp(30px, 1vw + 24px, 38px)/1 var(--font-display); }
-.countdown span { font-size: 13px; font-weight: 500; color: var(--muted); }
+.countdown { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: 100%; max-width: 560px; background: var(--p-surface); border-radius: var(--r-lg); padding: clamp(16px, 2vw, 24px) 8px; text-align: center; }
+.countdown div { display: grid; gap: 6px; justify-items: center; }
+.countdown div + div { border-left: 1px solid var(--line-gold); }
+.countdown b { font: 600 clamp(44px, 2.4vw + 26px, 64px)/1 var(--font-display); font-variant-numeric: lining-nums tabular-nums; }
+.countdown span { font-size: 14px; font-weight: 500; color: var(--muted); }
+@media (min-width: 1024px) { .hero--split .hero__text { align-self: center; } }
+
+/* ---------- sezioni alte quanto il loro contenuto, senza vuoti ---------- */
+main > section.section, footer.closing { height: auto !important; min-height: 0 !important; padding: clamp(72px, 7vw, 112px) 0 0 !important; }
+main > section.section > .wrap, footer.closing > .wrap { height: auto !important; }
+footer.closing { padding-bottom: calc(var(--s-6) + var(--bar, 0px)) !important; }
+html { scroll-padding-top: 64px; }
 
 /* ---------- divisore oro con cuore (lo stesso del sito precedente) ---------- */
 .heart-rule { display: block; width: 64px; height: 14px; }
 
 /* ---------- luogo ---------- */
 .place-text { display: grid; gap: var(--s-5); align-content: start; }
-.place-art { border-radius: var(--r-lg); overflow: hidden; background: var(--p-bg); }
-.place-art img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.place-map { display: grid; gap: var(--s-5); align-content: start; }
+.map { border-radius: var(--r-lg); overflow: hidden; background: var(--p-surface); aspect-ratio: 4 / 3.4; }
+.map iframe { width: 100%; height: 100%; border: 0; display: block; filter: saturate(.85); }
 .facts { list-style: none; padding: 0; margin: 0; display: grid; }
 .facts li { display: grid; grid-template-columns: 8.5em 1fr; gap: var(--s-4); padding: 12px 0; font-size: 16px; line-height: 1.55; }
 .facts li + li { border-top: 1px solid var(--line); }
@@ -101,13 +110,13 @@ address.addr { font: 500 clamp(22px, .5vw + 20px, 26px)/1.35 var(--font-display)
 /* ---------- programma ---------- */
 .day { list-style: none; padding: 0; margin: 0; }
 .day li { display: grid; gap: var(--s-3); align-content: start; }
-.day__art { aspect-ratio: 1; border-radius: var(--r-lg); background: var(--p-surface); display: grid; place-items: center; overflow: hidden; }
-.day__art img { width: 100%; height: 100%; object-fit: cover; }
+.day__art { aspect-ratio: 1; border-radius: var(--r-lg); background: var(--p-bg); border: 1px solid var(--line-gold); display: grid; place-items: center; overflow: hidden; padding: 6%; }
+.day__art img { width: 100%; height: 100%; object-fit: contain; transition: transform .5s cubic-bezier(.22, 1, .36, 1); }
+.day li:hover .day__art img { transform: scale(1.03); }
 .day time { font: 600 clamp(30px, 1vw + 24px, 38px)/1 var(--font-display); }
 .day p { font-size: 16px; line-height: 1.55; color: var(--ink); }
 
 /* ---------- conferma (RSVP) ---------- */
-#conferma { height: auto; min-height: calc(var(--h, 1) * 100svh); }
 .how { list-style: none; counter-reset: how; padding: 0; margin: var(--s-2) 0 0; display: grid; gap: var(--s-5); }
 .how li { counter-increment: how; display: grid; gap: 2px; font-size: 16px; line-height: 1.5; }
 .how b { font-weight: 500; font-size: 17px; }
@@ -186,19 +195,13 @@ address.addr { font: 500 clamp(22px, .5vw + 20px, 26px)/1.35 var(--font-display)
   #programma .day { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   #programma .day > li { grid-column: auto; }
   #luogo .grid > *, #conferma .grid > * { grid-column: 1 / -1; }
-  #luogo .place-art { margin-top: var(--s-7); }
-  #luogo { --h: 2; }
+  #luogo .place-map { margin-top: var(--s-6); }
   .bank > div { grid-column: 1 / -1; }
 }
 @media (max-width: 639px) {
   .fields { grid-template-columns: 1fr; }
-  #luogo, #luogo > .wrap, #luogo .grid { display: flex; flex-direction: column; }
-  #luogo > .wrap, #luogo .grid { flex: 1 1 auto; }
-  #luogo .grid { gap: var(--s-5); }
-  #luogo .place-text { display: contents; }
-  #luogo h2 { order: 1; } #luogo .addr { order: 2; }
-  #luogo .place-art { order: 3; margin-block: auto; }
-  #luogo .facts { order: 4; } #luogo .btn-row { order: 5; }
+  #luogo .place-map { margin-top: var(--s-5); }
+  .map { aspect-ratio: 1 / 1; }
   .facts li { grid-template-columns: 1fr; gap: 2px; }
   #programma .day { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--s-6); }
   #programma .day > li { grid-column: auto; }
@@ -207,7 +210,8 @@ address.addr { font: 500 clamp(22px, .5vw + 20px, 26px)/1.35 var(--font-display)
   .hero--split .hero__text { gap: var(--s-3); }
   .hero--split .hero__lead { font-size: 18px; }
   .hero--split .hero__media { margin-top: var(--s-5); }
-  .countdown b { font-size: 28px; }
+  .countdown b { font-size: 40px; }
+  .countdown { padding: 14px 4px; }
   .rsvp { gap: var(--s-5); }
   .rsvp__nav .btn { flex: 1; }
 }
@@ -254,6 +258,7 @@ address.addr { font: 500 clamp(22px, .5vw + 20px, 26px)/1.35 var(--font-display)
           <div><b data-cd="d">–</b><span>giorni</span></div>
           <div><b data-cd="h">–</b><span>ore</span></div>
           <div><b data-cd="m">–</b><span>minuti</span></div>
+          <div><b data-cd="s">–</b><span>secondi</span></div>
         </div>
         <div class="btn-row"><a class="btn btn--primary" href="#conferma">Conferma la presenza</a></div>
       </div>
@@ -263,7 +268,7 @@ address.addr { font: 500 clamp(22px, .5vw + 20px, 26px)/1.35 var(--font-display)
     </div></div>
   </section>
 
-  <section class="section" id="luogo" aria-labelledby="luogo-h" style="--hm: 2">
+  <section class="section" id="luogo" aria-labelledby="luogo-h">
     <div class="wrap">
       <div class="grid grid--top">
         <div class="span-6 place-text">
@@ -276,13 +281,13 @@ address.addr { font: 500 clamp(22px, .5vw + 20px, 26px)/1.35 var(--font-display)
             <li><b>Scarpe</b><span>Il giardino non è lastricato: meglio un tacco basso e largo.</span></li>
             <li><b>Dove dormire</b><span>Ci sono diverse strutture nei dintorni: scriveteci e vi diamo qualche consiglio.</span></li>
           </ul>
+        </div>
+        <div class="place-map span-6 start-7">
+          <div class="map"><iframe src="https://www.google.com/maps?q=Localit%C3%A0%20La%20Castella%2013%2C%20Villafranca%20d'Asti%20AT&amp;output=embed" title="Mappa de La Castella a Villafranca d'Asti" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
           <div class="btn-row">
-            <a class="btn btn--secondary" href="https://www.google.com/maps/dir/?api=1&amp;destination=La%20Castella%2C%20Localit%C3%A0%20La%20Castella%2013%2C%20Villafranca%20d%27Asti" target="_blank" rel="noopener">Ottieni le indicazioni</a>
+            <a class="btn btn--primary" href="https://www.google.com/maps/dir/?api=1&amp;destination=La%20Castella%2C%20Localit%C3%A0%20La%20Castella%2013%2C%20Villafranca%20d%27Asti" target="_blank" rel="noopener">Ottieni le indicazioni</a>
             <a class="link" href="matrimonio-francesca-roberto.ics" download>Aggiungi al calendario</a>
           </div>
-        </div>
-        <div class="place-art span-6 start-7">
-          <img src="img/la-castella.webp" alt="Disegno della villa de La Castella con il giardino" width="640" height="610" loading="lazy">
         </div>
       </div>
     </div>
@@ -295,15 +300,15 @@ address.addr { font: 500 clamp(22px, .5vw + 20px, 26px)/1.35 var(--font-display)
         <p>Dalla cerimonia all'ultimo ballo, senza spostarsi.</p>
       </div>
       <ol class="day grid">
-        <li class="span-3"><div class="day__art"><img src="img/arrivo.webp" alt="" width="260" height="301" loading="lazy"></div><time datetime="2027-06-19T16:00">16:00</time><p>Arrivo degli ospiti e inizio della cerimonia.</p></li>
-        <li class="span-3"><div class="day__art"><img src="img/aperitivo.webp" alt="" width="260" height="301" loading="lazy"></div><time datetime="2027-06-19T18:00">18:00</time><p>Aperitivo in giardino.</p></li>
-        <li class="span-3"><div class="day__art"><img src="img/cena.webp" alt="" width="260" height="218" loading="lazy"></div><time datetime="2027-06-19T20:00">20:00</time><p>Cena.</p></li>
+        <li class="span-3"><div class="day__art"><img src="img/la-castella.webp" alt="" width="640" height="610" loading="lazy"></div><time datetime="2027-06-19T16:00">16:00</time><p>Arrivo degli ospiti e inizio della cerimonia.</p></li>
+        <li class="span-3"><div class="day__art"><img src="img/aperitivo.svg" alt="" width="320" height="320" loading="lazy"></div><time datetime="2027-06-19T18:00">18:00</time><p>Aperitivo in giardino.</p></li>
+        <li class="span-3"><div class="day__art"><img src="img/cena.svg" alt="" width="320" height="320" loading="lazy"></div><time datetime="2027-06-19T20:00">20:00</time><p>Cena.</p></li>
         <li class="span-3"><div class="day__art"><img src="img/ballo.webp" alt="" width="300" height="300" loading="lazy"></div><time datetime="2027-06-20T01:30">01:30</time><p>Ultimo ballo e chiusura della serata in pista.</p></li>
       </ol>
     </div>
   </section>
 
-  <section class="section" id="conferma" aria-labelledby="conferma-h" style="--hm: 2">
+  <section class="section" id="conferma" aria-labelledby="conferma-h">
     <div class="wrap">
       <div class="grid grid--top">
         <div class="span-5" style="display:grid;gap:var(--s-5);align-content:start">
@@ -444,15 +449,16 @@ address.addr { font: 500 clamp(22px, .5vw + 20px, 26px)/1.35 var(--font-display)
 /* Conto alla rovescia: 19 giugno 2027 alle 16:00 ora italiana */
 (function () {
   var target = Date.parse('2027-06-19T16:00:00+02:00');
-  var el = { d: document.querySelector('[data-cd="d"]'), h: document.querySelector('[data-cd="h"]'), m: document.querySelector('[data-cd="m"]') };
+  var el = { d: document.querySelector('[data-cd="d"]'), h: document.querySelector('[data-cd="h"]'), m: document.querySelector('[data-cd="m"]'), s: document.querySelector('[data-cd="s"]') };
   function tick() {
     var diff = Math.max(0, target - Date.now());
     el.d.textContent = Math.floor(diff / 864e5);
     el.h.textContent = Math.floor(diff % 864e5 / 36e5);
     el.m.textContent = Math.floor(diff % 36e5 / 6e4);
+    el.s.textContent = Math.floor(diff % 6e4 / 1e3);
   }
   tick();
-  setInterval(tick, 20000);
+  setInterval(tick, 1000);
 })();
 
 /* Il menu segna la sezione che state guardando */
