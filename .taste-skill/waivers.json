@@ -1,0 +1,6 @@
+[
+  { "check": "phone-number", "target": "393450361009", "reason": "Numero WhatsApp vero di Roberto, dato dagli sposi: gli ospiti lo usano per confermare e per le domande." },
+  { "check": "phone-number", "target": "393472492362", "reason": "Numero WhatsApp vero di Francesca, dato dagli sposi: gli ospiti lo usano per confermare e per le domande." },
+  { "check": "map-link", "target": "Ottieni le indicazioni", "reason": "Indirizzo vero della villa con civico, dato dagli sposi: gli ospiti devono arrivarci, le indicazioni portano alla porta." },
+  { "check": "no-visual", "target": "section#conferma", "reason": "La sezione e' il modulo di conferma della presenza su un fondo proprio: il modulo e' il contenuto che l'ospite usa." }
+]

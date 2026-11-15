@@ -1,0 +1,4 @@
+shots/
+.taste-skill/*
+!.taste-skill/waivers.json
+node_modules/
