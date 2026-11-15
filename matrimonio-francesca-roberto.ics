@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Francesca e Roberto//Matrimonio//IT
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:matrimonio-20270619@pescaberto.it
+DTSTAMP:20261115T000000Z
+DTSTART:20270619T140000Z
+DTEND:20270619T233000Z
+SUMMARY:Matrimonio di Francesca e Roberto
+LOCATION:La Castella\, Località La Castella 13\, Villafranca d'Asti (AT)
+DESCRIPTION:Cerimonia alle 16:00\, poi aperitivo\, cena e festa. https://pescaberto.it
+URL:https://pescaberto.it/
+END:VEVENT
+END:VCALENDAR
