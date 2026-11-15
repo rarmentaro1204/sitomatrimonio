@@ -85,7 +85,17 @@ body { font-weight: 400; }
 .countdown div + div { border-left: 1px solid var(--line-gold); }
 .countdown b { font: 600 clamp(44px, 2.4vw + 26px, 64px)/1 var(--font-display); font-variant-numeric: lining-nums tabular-nums; }
 .countdown span { font-size: 14px; font-weight: 500; color: var(--muted); }
-@media (min-width: 1024px) { .hero--split .hero__text { align-self: center; } }
+/* il conto alla rovescia: una riga a sé, centrata sullo schermo */
+.hero__count { grid-column: 1 / -1; justify-self: center; }
+@media (min-width: 1024px) {
+  .hero--split .hero-text.hero__grid { grid-template-rows: minmax(0, 1fr) auto; row-gap: var(--s-6); }
+  .hero--split .hero__text { align-self: center; }
+}
+@media (max-width: 1023px) {
+  .hero--split .hero__text { order: 0; }
+  .hero__count { order: 1; align-self: center; margin-top: var(--s-6); }
+  .hero--split .hero__media { order: 2; }
+}
 
 /* ---------- sezioni alte quanto il loro contenuto, senza vuoti ---------- */
 main > section.section, footer.closing { height: auto !important; min-height: 0 !important; padding: clamp(72px, 7vw, 112px) 0 0 !important; }
@@ -254,17 +264,17 @@ address.addr { font: 500 clamp(22px, .5vw + 20px, 26px)/1.35 var(--font-display)
       <div class="hero__text span-6">
         <h1 id="hero-h">Francesca <span class="amp">&amp;</span> Roberto</h1>
         <p class="hero__lead">Ci sposiamo sabato 19 giugno 2027 alle 16:00 a La Castella, Villafranca d'Asti.</p>
-        <div class="countdown" aria-label="Tempo che manca al matrimonio">
-          <div><b data-cd="d">–</b><span>giorni</span></div>
-          <div><b data-cd="h">–</b><span>ore</span></div>
-          <div><b data-cd="m">–</b><span>minuti</span></div>
-          <div><b data-cd="s">–</b><span>secondi</span></div>
-        </div>
         <div class="btn-row"><a class="btn btn--primary" href="#conferma">Conferma la presenza</a></div>
       </div>
       <div class="hero__media seal span-6 start-7">
         <img src="img/monogramma.webp" alt="Monogramma F e R con lavanda e la data 19.06.27" width="640" height="640" fetchpriority="high">
       </div>
+        <div class="countdown hero__count" aria-label="Tempo che manca al matrimonio">
+          <div><b data-cd="d">–</b><span>giorni</span></div>
+          <div><b data-cd="h">–</b><span>ore</span></div>
+          <div><b data-cd="m">–</b><span>minuti</span></div>
+          <div><b data-cd="s">–</b><span>secondi</span></div>
+        </div>
     </div></div>
   </section>
 
