@@ -112,7 +112,7 @@ function doPost(e) {
     var righe = persone.map(function (p) {
       var all = p.allergie || [], int = p.intolleranze || [];
       var out = [pulisci_(p.nome), pulisci_(p.cognome),
-        p.fascia === 'Bambino' ? 'Bambino' : 'Adulto',
+        ['Adulto', 'Bambino', 'Neonato'].indexOf(p.fascia) > -1 ? p.fascia : 'Adulto',
         DIETE.indexOf(p.dieta) > -1 ? p.dieta : '',
         p.seggiolone ? 'X' : ''];
       ALLERGIE.forEach(function (a) { out.push(all.indexOf(a) > -1 ? 'X' : ''); });
